@@ -2,3 +2,4 @@
 /model/*.3dm
 /model/*.3dmbak
 /model/*.3dm.*
+/node_modules/
