@@ -1,7 +1,7 @@
 0_Gravity - LEO AgriTourism Station
 NASA LEO Commercialization Challenge | October 2025
 
-![Station Render](renders/station_cover.png)
+![Station Render](renders/ViewCapture20251004_121507.png)
 
 Overview:
 Modular LEO space station for commercial tourism and agricultural research. Our 3D-expandable polyhedral hub enables omnidirectional growth - not linear like ISS or planar like traditional concepts.
