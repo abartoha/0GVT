@@ -1,0 +1,14 @@
+Tourism is an exclusively human activity
+So we need to cater to the needs of the human
+
+Space Climate
+An Architectural Approach towards space station construction
+
+'
+External Features for modelling
+
+Robotic grapple fixtures (IERIIS)
+External power connectors (ISPSIS)
+Communication antennas (ICSIS)
+Rendezvous sensors/cameras/retro-reflectors (IRSIS)
+ECLSS vents/thermal radiators

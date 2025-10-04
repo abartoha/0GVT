@@ -1,0 +1,1 @@
+Raytracing done with Rhino 8 Corporate and Intel i5 8500, 16 GB Ram, Intel UHD 630, 200W Power Supply and a 650VA UPS :)
