@@ -17,12 +17,18 @@ Tanu - Presentation & Communication
 Institutions: 
 KUET | BUP | IU University
 
-Repository Structure
-├── notes/         # Project documentation
-├── obj/           # 3D models (.obj, .mtl)
-├── renders/       # Station visualizations
-├── presentation/  # Slide deck
-└── docs/          # PDFs
+0GVT/
+├── calculations/           # Mass budget Python scripts
+├── dist/                   # Vercel deployment files
+├── docs/                   # Technical documentation (PDFs)
+├── model/                  # 3D model files (.obj, .mtl, .blend)
+├── notes/                  # Project notes and research
+├── obj/                    # Additional 3D assets
+├── public/assets/          # Web assets for deployment
+├── renders/                # Station visualizations and renders
+├── BusinessModelDetail.pptx # Business case presentation
+├── README.md               # This file
+└── index.html              # Web demo entry point
 
 Quick Facts:
 Price: $4.5M/person (92% cheaper than Axiom's $55M)
