@@ -34,25 +34,37 @@ Novel hub connector allowing modules to attach in multiple spatial orientations 
 ## Quick Facts
 
 Price: $4.5M/person (92% cheaper than Axiom's $55M)
+
 Capacity: 8 persons (4 tourists + 4 crew)
+
 Investment: $2.3B construction
+
 Launch: 8 Falcon 9 flights
+
 Timeline: 4 years to operations
+
 Break-even: Year 6-8 with Starship economics
 
 ## Technical Specs
 
 Modules: 5.3m diameter, fit 3 per Falcon 9
+
 Power: 120kW solar
+
 Life Support: Triple-redundant ECLSS
+
 Agriculture: 50kg/month aeroponic production
+
 Safety: PLOC <1:500 (exceeds NASA <1:270)
 
 ## Business Model
 
 Revenue: $337M/year (Tourism 85% | Gov contracts 13% | Agriculture 2%)
+
 OPEX: $522M/year (Launch costs 79% of operations)
+
 Path to viability: Government partnership → Starship economics → Profitability
+
 
 ## Documentation
 
