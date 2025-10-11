@@ -1,0 +1,70 @@
+{
+  "configuration": {
+    "crew_capacity": 6,
+    "mission_duration_days": 7,
+    "modules": 6
+  },
+  "mass_budget": {
+    "modules": {
+      "Tourism_Module_6T4C": {
+        "dry_mass_kg": 27373,
+        "with_margin_kg": 31478.949999999997,
+        "power_w": 5000,
+        "fits_fairing": true
+      },
+      "Agriculture_Aeroponic": {
+        "dry_mass_kg": 21200,
+        "with_margin_kg": 24379.999999999996,
+        "power_w": 5000,
+        "fits_fairing": true
+      },
+      "Central_Hub": {
+        "dry_mass_kg": 13043,
+        "with_margin_kg": 14999.449999999999,
+        "power_w": 500,
+        "fits_fairing": true
+      },
+      "Power_Module": {
+        "dry_mass_kg": 15652,
+        "with_margin_kg": 17999.8,
+        "power_w": 0,
+        "fits_fairing": true
+      },
+      "Propulsion_Stationkeeping": {
+        "dry_mass_kg": 6956,
+        "with_margin_kg": 7999.4,
+        "power_w": 800,
+        "fits_fairing": true
+      },
+      "Assembly_Hardware": {
+        "dry_mass_kg": 4348,
+        "with_margin_kg": 5000.2,
+        "power_w": 0,
+        "fits_fairing": true
+      }
+    },
+    "total_dry_mass_kg": 88572,
+    "total_with_margin_kg": 101857.79999999999,
+    "consumables_kg": 436.8,
+    "grand_total_kg": 102294.59999999999
+  },
+  "launch_requirements": {
+    "total_station_mass_kg": 102294.59999999999,
+    "modules_per_launch": 3,
+    "total_launches_needed": 2,
+    "mass_per_launch_kg": 51147.299999999996,
+    "falcon9_capacity_kg": 22800,
+    "within_capacity": false,
+    "mass_margin_percent": -124.33026315789473
+  },
+  "power_budget": {
+    "total_power_requirement_w": 11300,
+    "total_power_requirement_kw": 11.3,
+    "solar_array_area_m2": 42.672518897829804,
+    "battery_capacity_kwh": 5.65
+  },
+  "agriculture": {
+    "growing_area_m2": 40,
+    "daily_yield_kg": 0.8
+  }
+}

@@ -3,8 +3,8 @@
 /model/*.3dmbak
 /model/*.3dm.*
 /node_modules/
-Thumbs.db
-assets/schematics/Audit report.txt
+*.db
+*.3dm
 model/misc/weaire-phelan-structure-2.snapshot.2/Things to d.txt
-model/misc/weaire-phelan-structure-2.snapshot.2/wp-tetrakaidecahedron.3dm
 model/misc/weaire-phelan-structure-2.snapshot.2/wp-tetrakaidecahedron.3dmbak
+assets/schematics/Audit report.txt
