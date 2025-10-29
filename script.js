@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -56,7 +57,10 @@ function calculateSpeed(bytesLoaded, timeElapsed) {
 }
 
 function calculateTimeRemaining(loaded, total, speed) {
-    if (!speed || speed === '0 KB/s') return '';
+    if (!speed || speed === '0 KB/s' || loaded >= total) {
+        timeRemaining.textContent = '';
+        return '';
+    }
     const remaining = total - loaded;
     const speedMatch = speed.match(/([\d.]+)\s*(\w+\/s)/);
     if (!speedMatch) return '';
@@ -69,6 +73,7 @@ function calculateTimeRemaining(loaded, total, speed) {
     else if (speedUnit.includes('MB')) bytesPerSecond *= 1024 * 1024;
     else if (speedUnit.includes('GB')) bytesPerSecond *= 1024 * 1024 * 1024;
     
+    if (bytesPerSecond === 0) return '';
     const secondsRemaining = remaining / bytesPerSecond;
     
     if (secondsRemaining < 60) {
@@ -80,8 +85,8 @@ function calculateTimeRemaining(loaded, total, speed) {
     }
 }
 
-function updateProgress(loaded, total, fileName, speed) {
-    const percent = Math.floor((loaded / total) * 100);
+function updateProgress(overallPercent, loaded, total, fileName, speed) {
+    const percent = Math.min(Math.floor(overallPercent), 100);
     progressText.textContent = `${percent}%`;
     progressBar.style.width = `${percent}%`;
     
@@ -93,6 +98,7 @@ function updateProgress(loaded, total, fileName, speed) {
         timeRemaining.textContent = timeRemainingText;
     }
 }
+
 
 function showError(message) {
     console.error(message);
@@ -179,6 +185,7 @@ loadingManager.onLoad = () => {
     speedInfo.textContent = '✓ All assets loaded';
     loadingStatus.textContent = 'Initializing 3D scene...';
     timeRemaining.textContent = '';
+    progressText.textContent = '100%';
     progressBar.style.width = '100%';
     
     setTimeout(() => {
@@ -214,7 +221,9 @@ rgbeLoader.load(
                 const speed = calculateSpeed(bytesDiff, timeDiff);
                 loadingStats.lastLoaded = progress.loaded;
                 loadingStats.lastTime = currentTime;
-                updateProgress(progress.loaded, progress.total, loadingStats.currentFile, speed);
+                // HDR contributes to the first 50% of the loading bar
+                const overallPercent = (progress.loaded / progress.total) * 50;
+                updateProgress(overallPercent, progress.loaded, progress.total, loadingStats.currentFile, speed);
             }
         }
     },
@@ -258,7 +267,9 @@ gltfLoader.load(
                 const speed = calculateSpeed(bytesDiff, timeDiff);
                 loadingStats.lastLoaded = progress.loaded;
                 loadingStats.lastTime = currentTime;
-                updateProgress(progress.loaded, progress.total, loadingStats.currentFile, speed);
+                // Model contributes to the second 50% of the loading bar
+                const overallPercent = 50 + (progress.loaded / progress.total) * 50;
+                updateProgress(overallPercent, progress.loaded, progress.total, loadingStats.currentFile, speed);
             }
         }
     },
@@ -372,12 +383,12 @@ function toggleFullscreen() {
 
 function toggleSettings() {
     const panel = document.getElementById('settingsPanel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
 }
 
 function toggleHelp() {
     const help = document.getElementById('shortcutsHelp');
-    help.style.display = help.style.display === 'none' ? 'block' : 'none';
+    help.style.display = help.style.display === 'none' || help.style.display === '' ? 'block' : 'none';
 }
 
 function toggleShadows() {
