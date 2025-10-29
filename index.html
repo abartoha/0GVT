@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model Viewer</title>
+    <title>Hilton Model Viewer</title>
     <style>
         * {
             margin: 0;
@@ -24,13 +24,14 @@
             height: 100vh;
         }
         
+        /* Loading Screen */
         #loading {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -46,13 +47,15 @@
         }
         
         .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #fff;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #4CAF50;
+            border-right: 4px solid #2196F3;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
         }
         
         @keyframes spin {
@@ -60,66 +63,604 @@
             100% { transform: rotate(360deg); }
         }
         
-        #progress {
-            margin-top: 10px;
-            font-size: 14px;
-            opacity: 0.7;
+        #loadingTitle {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
         
-        #controls {
+        #progress {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            opacity: 0.9;
+            color: #4CAF50;
+        }
+
+        #progressBarContainer {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #2196F3 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        #loadingDetails {
+            margin-top: 15px;
+            font-size: 13px;
+            opacity: 0.8;
+            text-align: center;
+            min-height: 40px;
+        }
+
+        #fileInfo {
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        #speedInfo {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        #loadingStatus {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #888;
+            font-style: italic;
+        }
+
+        #timeRemaining {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #2196F3;
+        }
+
+        /* Control Panels */
+        .panel {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             padding: 15px;
             border-radius: 10px;
             color: #fff;
             font-size: 13px;
             z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
-        
-        #controls h3 {
+
+        #controlsPanel {
+            bottom: 20px;
+            left: 20px;
+            max-width: 200px;
+        }
+
+        #toolbarPanel {
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        #statsPanel {
+            top: 20px;
+            right: 20px;
+            min-width: 200px;
+        }
+
+        #settingsPanel {
+            top: 80px;
+            right: 20px;
+            max-width: 280px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        #annotationsPanel {
+            bottom: 20px;
+            right: 20px;
+            max-width: 250px;
+            display: none;
+        }
+
+        .panel h3 {
             margin: 0 0 10px 0;
             font-size: 16px;
             font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
         }
-        
-        #controls p {
+
+        .panel p {
             margin: 5px 0;
             opacity: 0.9;
         }
 
+        /* Buttons */
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        /* Sliders */
+        .slider-group {
+            margin: 12px 0;
+        }
+
+        .slider-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .slider {
+            width: 100%;
+            height: 4px;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Stats Display */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .stat-label {
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        /* FPS Counter */
+        #fpsCounter {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Annotations */
+        .annotation {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .annotation::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid rgba(0, 0, 0, 0.8);
+        }
+
+        /* Color Picker */
+        input[type="color"] {
+            width: 100%;
+            height: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* Select Dropdown */
+        select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Error Display */
         #error {
             position: fixed;
             top: 20px;
-            right: 20px;
-            background: rgba(255, 0, 0, 0.8);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.9);
             backdrop-filter: blur(10px);
-            padding: 15px;
+            padding: 15px 25px;
             border-radius: 10px;
             color: #fff;
             font-size: 13px;
-            z-index: 100;
-            max-width: 400px;
+            z-index: 1001;
+            max-width: 500px;
             display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Keyboard Shortcuts Help */
+        #shortcutsHelp {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            color: #fff;
+            z-index: 1002;
+            display: none;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        .shortcut-key {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        /* Fullscreen */
+        #viewer.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+        }
+
+        /* Thumbnail */
+        #thumbnail {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            z-index: 99;
+        }
+
+        #thumbnail canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .panel {
+                font-size: 11px;
+                padding: 10px;
+            }
+
+            #toolbarPanel {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loading">
-        <div class="spinner"></div>
-        <div>Loading 3D Scene...</div>
-        <div id="progress">0%</div>
-    </div>
-    
-    <div id="error"></div>
-    
-    <div id="controls">
-        <h3>Controls</h3>
-        <p>🖱️ Left Click + Drag: Rotate</p>
-        <p>🖱️ Right Click + Drag: Pan</p>
-        <p>🔍 Scroll: Zoom</p>
+    <div id="viewer">
+        <div id="loading">
+            <div class="spinner"></div>
+            <div id="loadingTitle" class="loading-pulse">Loading 3D Scene</div>
+            <div id="progress">0%</div>
+            <div id="progressBarContainer">
+                <div id="progressBar"></div>
+            </div>
+            <div id="loadingDetails">
+                <div id="fileInfo">Initializing...</div>
+                <div id="speedInfo"></div>
+                <div id="loadingStatus"></div>
+                <div id="timeRemaining"></div>
+            </div>
+        </div>
+        
+        <div id="error"></div>
+        
+        <!-- Toolbar -->
+        <div id="toolbarPanel" class="panel">
+            <button class="btn" id="resetCameraBtn" title="Reset Camera (R)">🔄 Reset</button>
+            <button class="btn" id="autoRotateBtn" title="Auto Rotate (Space)">🔁 Rotate</button>
+            <button class="btn" id="wireframeBtn" title="Wireframe (W)">📐 Wire</button>
+            <button class="btn" id="screenshotBtn" title="Screenshot (S)">📸 Shot</button>
+            <button class="btn" id="fullscreenBtn" title="Fullscreen (F)">⛶ Full</button>
+            <button class="btn" id="settingsBtn" title="Settings (G)">⚙️ Settings</button>
+            <button class="btn" id="helpBtn" title="Help (H)">❓ Help</button>
+        </div>
+
+        <!-- Stats Panel -->
+        <div id="statsPanel" class="panel">
+            <h3>Performance</h3>
+            <div id="fpsCounter">60 FPS</div>
+            <div class="stat-row">
+                <span class="stat-label">Vertices:</span>
+                <span class="stat-value" id="verticesCount">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Triangles:</span>
+                <span class="stat-value" id="trianglesCount">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Draw Calls:</span>
+                <span class="stat-value" id="drawCalls">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Textures:</span>
+                <span class="stat-value" id="texturesCount">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Memory:</span>
+                <span class="stat-value" id="memoryUsage">0 MB</span>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div id="settingsPanel" class="panel">
+            <h3>Settings</h3>
+            
+            <div class="slider-group">
+                <label>Quality Preset</label>
+                <select id="qualityPreset">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="ultra">Ultra</option>
+                </select>
+            </div>
+
+            <div class="slider-group">
+                <label>Background</label>
+                <select id="backgroundPreset">
+                    <option value="hdr">HDR Environment</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="gray">Gray</option>
+                    <option value="gradient">Gradient</option>
+                    <option value="custom">Custom Color</option>
+                </select>
+            </div>
+
+            <div class="slider-group" id="customColorGroup" style="display: none;">
+                <label>Custom Color</label>
+                <input type="color" id="customBgColor" value="#1a1a1a">
+            </div>
+
+            <div class="slider-group">
+                <label>Lighting Preset</label>
+                <select id="lightingPreset">
+                    <option value="default" selected>Default</option>
+                    <option value="studio">Studio</option>
+                    <option value="outdoor">Outdoor</option>
+                    <option value="dramatic">Dramatic</option>
+                    <option value="soft">Soft</option>
+                </select>
+            </div>
+
+            <div class="slider-group">
+                <label>Shadow Quality: <span id="shadowQualityValue">Medium</span></label>
+                <input type="range" class="slider" id="shadowQuality" min="0" max="3" value="1" step="1">
+            </div>
+
+            <div class="slider-group">
+                <label>Field of View: <span id="fovValue">40</span>°</label>
+                <input type="range" class="slider" id="fovSlider" min="20" max="120" value="40">
+            </div>
+
+            <div class="slider-group">
+                <label>Exposure: <span id="exposureValue">1.0</span></label>
+                <input type="range" class="slider" id="exposureSlider" min="0.1" max="3" value="1" step="0.1">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" id="shadowsBtn">✓ Shadows</button>
+                <button class="btn" id="gridBtn">Grid</button>
+                <button class="btn" id="axesBtn">Axes</button>
+            </div>
+
+            <h3 style="margin-top: 20px;">Effects</h3>
+            <div class="btn-group">
+                <button class="btn" id="bloomBtn">Bloom</button>
+                <button class="btn" id="aoBtn">AO</button>
+            </div>
+
+            <h3 style="margin-top: 20px;">Material</h3>
+            <div class="slider-group">
+                <label>Roughness: <span id="roughnessValue">0.5</span></label>
+                <input type="range" class="slider" id="roughnessSlider" min="0" max="1" value="0.5" step="0.01">
+            </div>
+
+            <div class="slider-group">
+                <label>Metalness: <span id="metalnessValue">0.5</span></label>
+                <input type="range" class="slider" id="metalnessSlider" min="0" max="1" value="0.5" step="0.01">
+            </div>
+
+            <div class="slider-group">
+                <label>Model Color</label>
+                <input type="color" id="modelColor" value="#ffffff">
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div id="controlsPanel" class="panel">
+            <h3>Controls</h3>
+            <p>🖱️ Left: Rotate</p>
+            <p>🖱️ Right: Pan</p>
+            <p>🔍 Scroll: Zoom</p>
+            <p>⌨️ Press H for shortcuts</p>
+        </div>
+
+        <!-- Annotations Panel -->
+        <div id="annotationsPanel" class="panel">
+            <h3>Annotations</h3>
+            <p>Click on the model to add annotations</p>
+            <div class="btn-group">
+                <button class="btn" id="addAnnotationBtn">📍 Add</button>
+                <button class="btn" id="clearAnnotationsBtn">🗑️ Clear</button>
+            </div>
+            <div id="annotationsList"></div>
+        </div>
+
+        <!-- Keyboard Shortcuts Help -->
+        <div id="shortcutsHelp">
+            <h3 style="margin-bottom: 20px; text-align: center;">Keyboard Shortcuts</h3>
+            <div class="shortcut-row">
+                <span>Reset Camera</span>
+                <span class="shortcut-key">R</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Auto Rotate</span>
+                <span class="shortcut-key">Space</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Wireframe</span>
+                <span class="shortcut-key">W</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Screenshot</span>
+                <span class="shortcut-key">S</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Fullscreen</span>
+                <span class="shortcut-key">F</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Settings</span>
+                <span class="shortcut-key">G</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Grid Toggle</span>
+                <span class="shortcut-key">T</span>
+            </div>
+            <div class="shortcut-row">
+                <span>Close/Help</span>
+                <span class="shortcut-key">H / Esc</span>
+            </div>
+            <button class="btn" onclick="document.getElementById('shortcutsHelp').style.display='none'" style="margin-top: 20px; width: 100%;">Close</button>
+        </div>
+
+        <!-- Thumbnail View -->
+        <div id="thumbnail"></div>
     </div>
     
     <script type="module" src="script.js"></script>
