@@ -2,7 +2,7 @@
 
 ### by Team 0_Gravity
 
-(Web Explore)[https://0gvt.vercel.app/]
+[Web Exploration](https://0gvt.vercel.app/) for the space station
 
 ### NASA Space App Challenge 2025 | LEO Commercialization
 
